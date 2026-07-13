@@ -14,8 +14,8 @@ Personal laboratory to learn AI Engineering through real-world projects.
 
 ### Fundamentals
 
-- [ ] Hello LLM
-- [ ] Structured Outputs
+- [x] Hello LLM
+- [x] Structured Outputs
 - [ ] Streaming
 - [ ] Prompt Engineering
 
@@ -31,8 +31,3 @@ Personal laboratory to learn AI Engineering through real-world projects.
 - [ ] MCP
 - [ ] Multi-Agent
 
-### Products
-
-- [ ] CalmMom
-- [ ] Medical Copilot
-- [ ] Logistics Copilot
