@@ -1,11 +1,12 @@
-import { chat } from "@/lib/ai/openai";
+// Restore these when the handler body below is uncommented.
+// import { recipePromtV1 } from '@/lib/ai/prompts';
+//
+// type ChatRequest = {
+//   prompt: string;
+// };
 
-type ChatRequest = {
-  prompt: string;
-};
-
-export async function POST(request: Request) {
-  try {
+export async function POST(_request: Request) {
+  /*   try {
     const body: ChatRequest = await request.json();
 
     if (
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const answer = await chat(body.prompt);
+    const answer = await recipePromtV1.build(body.prompt);
 
     return Response.json({ answer });
   } catch (error) {
@@ -28,5 +29,5 @@ export async function POST(request: Request) {
       { error: "Failed to generate text" },
       { status: 500 }
     );
-  }
+  } */
 }

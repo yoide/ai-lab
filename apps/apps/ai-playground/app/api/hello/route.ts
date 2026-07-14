@@ -1,3 +1,3 @@
 export async function GET() {
-  return Response.json({ message: "Hello from API Route" });
+  return Response.json({ message: 'Hello from API Route' });
 }
