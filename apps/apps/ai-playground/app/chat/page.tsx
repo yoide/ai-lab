@@ -1,69 +1,132 @@
 'use client';
 
 import { useState } from 'react';
-
-type Status = 'idle' | 'loading' | 'success' | 'error';
-
-type ChatResponse = {
-  answer: string;
-};
+import ReactMarkdown from 'react-markdown';
 
 export default function ChatPage() {
-  const [status, setStatus] = useState<Status>('idle');
   const [prompt, setPrompt] = useState('');
   const [answer, setAnswer] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = async () => {
+  const handleSend = async () => {
     try {
-      setStatus('loading');
+      setLoading(true);
+      setError('');
       setAnswer('');
 
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+        }),
       });
 
       if (!response.ok) {
         throw new Error('Request failed');
       }
 
-      const data: ChatResponse = await response.json();
-      setStatus('success');
-      setAnswer(data.answer);
+      if (!response.body) {
+        throw new Error('Response body is empty');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      let accumulated = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        accumulated += decoder.decode(value, {
+          stream: true,
+        });
+
+        setAnswer(accumulated);
+      }
     } catch (err) {
-      setStatus('error');
       console.error(err);
+      setError('Failed to generate response.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <main className="flex flex-col gap-4 p-8 max-w-2xl">
-      <h1 className="text-3xl font-bold">AI Lab</h1>
+    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 p-8">
+      <header className="space-y-2">
+        <h1 className="text-4xl font-bold">AI Lab Chat</h1>
 
-      <textarea
-        className="border border-neutral-300 dark:border-neutral-600 rounded-md p-4 focus:outline-none focus:border-neutral-500 focus:ring-2 focus:ring-blue-500/20 bg-transparent text-inherit"
-        onChange={(e) => setPrompt(e.target.value)}
-        value={prompt}
-      />
+        <p className="text-zinc-400">Experimenting with OpenAI Streaming Responses.</p>
+      </header>
 
-      <button
-        className="border border-neutral-300 dark:border-neutral-700 rounded-md px-4 py-2 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-900 active:bg-neutral-100 dark:active:bg-neutral-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        onClick={handleSubmit}
-        disabled={status === 'loading'}
-      >
-        {status === 'loading' ? 'Loading...' : 'Ask AI'}
-      </button>
+      <div className="flex flex-col gap-4">
+        <textarea
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          rows={5}
+          placeholder="Ask me anything..."
+          className="
+        w-full
+        resize-none
+        rounded-xl
+        border
+        border-zinc-700
+        bg-zinc-900
+        p-4
+        text-zinc-100
+        placeholder:text-zinc-500
+        outline-none
+        transition
+        focus:border-blue-500
+      "
+        />
 
-      {status === 'success' && answer && (
-        <div className="rounded-md bg-green-100 p-4">
-          <p>✅ API responded successfully!</p>
-          <p>{answer}</p>
+        <div className="flex justify-end">
+          <button
+            onClick={handleSend}
+            disabled={loading || !prompt.trim()}
+            className="
+          rounded-xl
+          bg-blue-600
+          px-6
+          py-3
+          font-medium
+          text-white
+          transition
+          hover:bg-blue-500
+          disabled:cursor-not-allowed
+          disabled:opacity-50
+        "
+          >
+            {loading ? 'Generating...' : 'Send'}
+          </button>
         </div>
+      </div>
+
+      {error && (
+        <div className="rounded-xl border border-red-800 bg-red-950 p-4 text-red-300">{error}</div>
       )}
 
-      {status === 'error' && (
-        <div className="rounded-md bg-red-100 p-4">❌ API request failed.</div>
+      {(loading || answer) && (
+        <section className="rounded-xl border border-zinc-700 bg-zinc-900 p-6 shadow-lg">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-zinc-100">Assistant</h2>
+
+            {loading && (
+              <span className="animate-pulse text-sm text-blue-400">● Generating...</span>
+            )}
+          </div>
+
+          <article className="prose prose-invert max-w-none">
+            <ReactMarkdown>{answer}</ReactMarkdown>
+          </article>
+        </section>
       )}
     </main>
   );

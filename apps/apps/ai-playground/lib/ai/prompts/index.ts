@@ -1,1 +1,1 @@
-export { RecipePromptV1 } from './recipe-v1';
+export { RecipePromptV1 } from './recipe-v1.prompt';

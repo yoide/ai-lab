@@ -1,4 +1,4 @@
-import { type Recipe, type RecipeRequest } from '../types';
+import { type Recipe, type RecipeRequest } from '../types/types';
 import { client } from '../client';
 import { zodTextFormat } from 'openai/helpers/zod.mjs';
 import { RecipeSchema } from '../schemas';

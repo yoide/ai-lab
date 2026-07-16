@@ -1,4 +1,4 @@
-import { type RecipeRequest } from '../types';
+import { type RecipeRequest } from '../types/types';
 
 export const RecipePromptV1 = {
   version: 'v1',

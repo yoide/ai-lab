@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Recipe } from '@/lib/ai/types';
+import type { Recipe } from '@/lib/ai/types/types';
 
 const TIME_OPTIONS = [15, 30, 45, 60];
 
