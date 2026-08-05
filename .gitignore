@@ -141,3 +141,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+docs/adr/README.md
+docs/PROJECT_CONTEXT.md
+docs/roadmap.md
+docs/roadmap.md
