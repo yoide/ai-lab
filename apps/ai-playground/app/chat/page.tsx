@@ -1,19 +1,41 @@
 'use client';
 
+import { type Message } from '@/lib/ai/models/message';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 export default function ChatPage() {
   const [prompt, setPrompt] = useState('');
-  const [answer, setAnswer] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSend = async () => {
+    if (!prompt.trim() || loading) {
+      return;
+    }
+
     try {
       setLoading(true);
       setError('');
-      setAnswer('');
+
+      const userMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'user',
+        content: prompt,
+      };
+
+      const assistantMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        content: '',
+      };
+
+      const conversation = [...messages, userMessage];
+
+      setMessages([...conversation, assistantMessage]);
+
+      setPrompt('');
 
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -21,7 +43,7 @@ export default function ChatPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt,
+          messages: conversation,
         }),
       });
 
@@ -41,16 +63,27 @@ export default function ChatPage() {
       while (true) {
         const { done, value } = await reader.read();
 
-        if (done) break;
+        if (done) {
+          break;
+        }
 
         accumulated += decoder.decode(value, {
           stream: true,
         });
 
-        setAnswer(accumulated);
+        setMessages((previous) =>
+          previous.map((message) =>
+            message.id === assistantMessage.id
+              ? {
+                  ...message,
+                  content: accumulated,
+                }
+              : message,
+          ),
+        );
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setError('Failed to generate response.');
     } finally {
       setLoading(false);
@@ -64,6 +97,29 @@ export default function ChatPage() {
 
         <p className="text-zinc-400">Experimenting with OpenAI Streaming Responses.</p>
       </header>
+
+      {(loading || messages.length > 0) && (
+        <div className="flex flex-col gap-6">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`rounded-xl p-5 ${
+                message.role === 'user'
+                  ? 'bg-blue-600 text-white self-end max-w-[80%]'
+                  : 'bg-zinc-900 border border-zinc-700 self-start max-w-[80%]'
+              }`}
+            >
+              <p className="mb-2 text-sm font-semibold">
+                {message.role === 'user' ? 'You' : 'Assistant'}
+              </p>
+
+              <div className="prose prose-invert max-w-none">
+                <ReactMarkdown>{message.content}</ReactMarkdown>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col gap-4">
         <textarea
@@ -111,22 +167,6 @@ export default function ChatPage() {
 
       {error && (
         <div className="rounded-xl border border-red-800 bg-red-950 p-4 text-red-300">{error}</div>
-      )}
-
-      {(loading || answer) && (
-        <section className="rounded-xl border border-zinc-700 bg-zinc-900 p-6 shadow-lg">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-zinc-100">Assistant</h2>
-
-            {loading && (
-              <span className="animate-pulse text-sm text-blue-400">● Generating...</span>
-            )}
-          </div>
-
-          <article className="prose prose-invert max-w-none">
-            <ReactMarkdown>{answer}</ReactMarkdown>
-          </article>
-        </section>
       )}
     </main>
   );

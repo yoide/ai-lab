@@ -1,23 +1,36 @@
-Phase 1
+AI Foundations
 
-✅ Hello LLM
+✅ Provider abstraction
+✅ Prompt management
 ✅ Structured Outputs
 ✅ Streaming
 
-Phase 2
+Context Management
 
-⬜ Conversation History
+⬜ Conversation history
 ⬜ Memory
-⬜ Tool Calling
+⬜ Context window
 
-Phase 3
+Knowledge
 
+⬜ Embeddings
+⬜ Vector Stores
 ⬜ RAG
-⬜ Evaluation
-⬜ Observability
 
-Phase 4
+Execution
 
-⬜ Agents
-⬜ Voice
+⬜ Tool Calling
 ⬜ MCP
+⬜ Agents
+
+Quality
+
+⬜ Observability
+⬜ Evaluation
+⬜ Testing
+
+Deployment
+
+⬜ Cost control
+⬜ Monitoring
+⬜ Multi-provider

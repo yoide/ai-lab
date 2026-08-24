@@ -1,8 +1,10 @@
+import { type Message } from '../models/message';
+
 export type ChatRequest = {
-  prompt: string;
+  messages: Message[];
 };
 
 export type StreamRequest = {
   model: string;
-  prompt: string;
+  messages: Message[];
 };

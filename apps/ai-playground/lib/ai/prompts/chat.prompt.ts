@@ -1,16 +1,19 @@
+import type { ChatRequest } from '../types/chat.type';
+
 export const ChatPromptV1 = {
   version: 'v1',
-  build(prompt: string): string {
-    return `
-You are a helpful AI assistant.
 
-Be concise.
+  build: (request: ChatRequest) => {
+    return [
+      {
+        role: 'system' as const,
+        content: 'You are a helpful AI assistant.',
+      },
 
-Respond using Markdown.
-
-User:
-
-${prompt}
-`;
+      ...request.messages.map((message) => ({
+        role: message.role,
+        content: message.content,
+      })),
+    ];
   },
 };
