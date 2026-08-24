@@ -12,24 +12,33 @@ Personal laboratory for learning AI Engineering by building real-world applicati
 
 ## Roadmap
 
-### Fundamentals
+### Phase 1 — Fundamentals
 
 - [x] Hello LLM
 - [x] Structured Outputs
-- [ ] Streaming
-- [ ] Prompt Engineering
+- [x] Streaming
+- [x] Prompt Engineering
+- [x] Prompt Versioning
+- [x] Provider Abstraction
 
-### Knowledge
+### Phase 2 — Context & Interaction
 
+- [x] Conversation History
 - [ ] Memory
-- [ ] Embeddings
-- [ ] RAG
-
-### Agents
-
 - [ ] Tool Calling
+
+### Phase 3 — Knowledge & Quality
+
+- [ ] RAG
+- [ ] Evaluation
+- [ ] Observability
+
+### Phase 4 — Advanced AI Systems
+
+- [ ] Agents
+- [ ] Voice
 - [ ] MCP
-- [ ] Multi-Agent
+- [ ] Multi-Agent Systems
 
 ## Architecture
 
@@ -41,10 +50,15 @@ Current stack:
 - OpenAI Responses API
 - Zod
 - Tailwind CSS
+- React Markdown
 
 Patterns:
 
 - Prompt Versioning
 - Service Layer
+- Provider Abstraction
 - Runtime Validation
 - Structured Outputs
+- Streaming
+
+See [`docs/PROJECT_CONTEXT.md`](./docs/PROJECT_CONTEXT.md) for the current project state and [`docs/architecture.md`](./docs/architecture.md) for the detailed architecture.
